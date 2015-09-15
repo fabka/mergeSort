@@ -8,12 +8,14 @@ struct Fila{
 };
 
 struct Tabla{
-    struct Fila filas[100];
+    struct Fila fila[100];
     int tam;
 };
 
 struct Fila crearFila(char *linea);
-struct Tabla obtenerTabla(char nombreArchivo[]);
+struct Tabla importarTabla(char nombreArchivo[]);
+struct Tabla ordenarTabla( struct Tabla tabla );
+void exportartabla( struct Tabla tabla, char *nombreArchivo );
 void ordenarArchivo(char nombreArchivo[]);
 void imprimirTabla( struct Tabla tabla );
 
@@ -28,38 +30,58 @@ struct Fila crearFila(char linea[]){
     char *stringp = linea;
     char *delim = " ";
     char *token;
-    
+
     int i=0;
     while (stringp != NULL) {
         token = strsep(&stringp, delim);
-	if( strcmp(token, "") != 0  ){
-	    strcpy(fila.columna[i++], token);
-	}
+    	if( strcmp(token, "") != 0  ){
+    	    strcpy(fila.columna[i++], token);
+    	}
     }
     return fila;
 };
 
-void ordenarArchivo(char nombreArchivo[]){
+/*
+void *importarTabla(void *param){
     //Declaraciones
-    struct Tabla tabla = obtenerTabla( nombreArchivo );
-    imprimirTabla(tabla);
+    char *nombreArchivo;
+    Struct Tabla tabla;
 
-    //Copiar contenido
-    //organizar arreglo
+    nombreArchivo = (char*)param;
+    //importar tabla
+    tabla = obtenerTabla(nombreArchivo );
+    //imprimirTabla(tabla);
+    //ordenar tabla
+    ordenarTabla(tabla);
     //reescribir archivo
+    exportartabla(tabla, nombreArchivo);
+}
+*/
+
+void importarTabla(char nombreArchivo[]){
+    //Declaraciones
+    Struct Tabla tabla;
+
+    //importar Tabla
+    tabla = obtenerTabla(nombreArchivo );
+    //imprimirTabla(tabla);
+    //ordenar tabla
+    ordenarTabla(tabla);
+    //reescribir archivo
+    exportartabla(tabla, nombreArchivo);
 }
 
-struct Tabla obtenerTabla(char nombreArchivo[]){
+struct Tabla importarTabla(char nombreArchivo[]){
     FILE *ptr_file;
     char buf[1000];
-    struct Tabla tabla;	
-    
+    struct Tabla tabla;
+
     ptr_file =fopen(nombreArchivo, "r");
 
     int tam = 0;
     if (ptr_file){
         while (fgets(buf,1000, ptr_file)!=NULL)
-            tabla.filas[tam++] = crearFila(buf);
+            tabla.fila[tam++] = crearFila(buf);
 	tabla.tam = tam;
         fclose(ptr_file);
     }
@@ -71,8 +93,51 @@ void imprimirTabla( struct Tabla tabla ){
     int tam = tabla.tam;
     for(i=0; i<tam; i++){
         for(j=0; j<6; j++ ){
-	    printf("%s ",tabla.filas[i].columna[j]);
+	    printf("%s ",tabla.fila[i].columna[j]);
         }
         printf("\n");
+    }
+}
+
+struct Tabla ordenarTabla( struct Tabla tabla ){
+    int i, j;
+    for( i=0; i<tabla.tam; i++){
+        for(j=o; j<tabla.tam-i; j++){
+            //criterio 1
+            if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) > 0 ){
+                struct Fila temp  = tabla.fila[j];
+                tabla.fila[j] = tabla.fila[j+1];
+                tabla.fila[j+1] = temp;
+            }else if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) == 0 ){
+                //Criterio 2
+                if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
+                    struct Fila temp  = tabla.fila[j];
+                    tabla.fila[j] = tabla.fila[j+1];
+                    tabla.fila[j+1] = temp;
+                }else if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) == 0 ){
+                    //Criterio 3
+                    if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
+                        struct Fila temp  = tabla.fila[j];
+                        tabla.fila[j] = tabla.fila[j+1];
+                        tabla.fila[j+1] = temp;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void exportartabla( struct Tabla tabla, char *nombreArchivo ){
+    FILE *file = fopen(nombreArchivo, "w");
+    int i, j;
+    if (file != NULL){
+
+        for( i=0; i<tabla.tam; i++ ){
+            fprintf(f, "%8s %4s %8s %6s %8s %8s\n", tabla.fila[i].columna[0],
+                tabla.fila[i].columna[1], tabla.fila[i].columna[2],
+                tabla.fila[i].columna[3], tabla.fila[i].columna[4],
+                tabla.fila[i].columna[5] );
+        }
+        fclose(file);
     }
 }
