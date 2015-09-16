@@ -1,0 +1,36 @@
+
+#include <sys/types.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <wait.h>
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+int main(int argv, char* argc[]){
+    
+    int status;
+    string indice;
+    pid_t childPid;
+    string archivo, comando = "", archivoAordenar, listaArchivos = "";
+    for(int i = 1; i < argv-1; i++){
+	if((childPid = fork()) < 0){
+		perror("fork: ");
+		exit(1);
+	}
+	indice = i+48;
+	archivo = "tmp" + indice;
+	listaArchivos += archivo + " ";
+        if(childPid == 0){
+		archivoAordenar = argc[i];
+		comando = "sort -m " + archivoAordenar + " > " + archivo;
+		system(comando.c_str());
+		exit(0);
+	}
+    }
+    for(int i = 1; i < argv-1; i++){ wait(&status);}
+    comando = "sort -m " + listaArchivos + " > " + argc[argv-1];
+    system(comando.c_str());
+    exit(0);
+}
