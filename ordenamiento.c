@@ -4,10 +4,10 @@
 #include <string.h>
 
 int ordenarArchivo(char nombreArchivo[]){
-    int estado = 0;
+    int estado = 1;
     FILE* ptr_file = fopen(nombreArchivo, "r");
     if(ptr_file != NULL){
-	estado = 1;
+	estado = 0;
     	struct Tabla tabla;
     	tabla = importarTabla(ptr_file);
     	ordenarTabla(tabla);
@@ -79,7 +79,7 @@ void exportartabla( struct Tabla tabla, char *nombreArchivo ){
     if (file != NULL){
 
         for( i=0; i<tabla.tam; i++ ){
-            fprintf(file, "%8s %4s %8s %6s %8s %8s", tabla.fila[i].columna[0],
+            fprintf(file, "%8s %4s %8s %6s %8s %8s\n", tabla.fila[i].columna[0],
                 tabla.fila[i].columna[1], tabla.fila[i].columna[2],
                 tabla.fila[i].columna[3], tabla.fila[i].columna[4],
                 tabla.fila[i].columna[5] );
@@ -97,3 +97,53 @@ void imprimirTabla( struct Tabla tabla ){
         }
     }
 }
+
+void ssort(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int hi)
+{
+    if(lo >= hi) return;
+    int mid = (lo + hi)/2;
+    ssort(arr, arrAux, lo, mid);
+    ssort(arr, arrAux, mid+1, hi);
+    mmerge(arr, arrAux, lo, mid, hi);
+}
+
+void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, int hi)
+{
+    int k,l;
+    for(k = lo; k <= hi; k++)
+        for(l = 0; l < 100; l++)
+        	arrAux.fila[k][l] = arr.fila[k][l];
+    int i = lo, j = mid+1;
+    for(k = lo; k <= hi; k++)
+    {
+        if(i > mid)         
+		for(l = 0; l < 100; l++)
+			arr.fila[k][l] = arrAux.fila[j++][l];
+        else if(j > hi)     
+		for(l = 0; l < 100; l++)
+			arr.fila[k][l] = arrAux.fila[i++][l];
+        else if(arrAux.fila[i] > arrAux.fila[j]){
+		for(l = 0; l < 100; l++)
+	            arr.fila[k][l] = arrAux.fila[j++][l];
+        }else{
+		for(l = 0; l < 100; l++)
+            		arr.fila[k][l] = arrAux.fila[i++][l];
+        }
+    }
+}
+
+int fileTam(char *nombreArchivo){
+        FILE * fp = fopen(nombreArchivo, "r");
+	int lines = 0;
+	char ch;
+        if (fp != NULL){
+		while(!feof(fp))
+		{
+		  ch = fgetc(fp);
+		  if(ch == '\n')
+		  {
+		    lines++;
+		  }
+		}
+	}
+} 

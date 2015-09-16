@@ -25,8 +25,10 @@ int main(int argv, char* argc[]){
 	}
     }
     for(i = 1; i < argv-1; i++){ wait(&status);}
+    int tamTotal = 0;
     for(i = 1; i < argv-1; i++){
-       // merge sort
-    }
+       tamTotal += fileTam(argc[i]);
+    } 
+    printf("tam: %d\n",tamTotal);
     exit(0);
 }
