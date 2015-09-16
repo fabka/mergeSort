@@ -10,7 +10,7 @@ int ordenarArchivo(char nombreArchivo[]){
 	estado = 0;
     	struct Tabla tabla;
     	tabla = importarTabla(ptr_file);
-    	ordenarTabla(tabla);
+    	tabla = ordenarTabla(tabla);
     	exportartabla(tabla, nombreArchivo);
     }
     return estado;
@@ -46,31 +46,32 @@ struct Tabla importarTabla(FILE *ptr_file){
 }
 
 struct Tabla ordenarTabla( struct Tabla tabla ){
-    int i, j;
-    for( i=1; i<tabla.tam; i++){
-        for(j=0; j<tabla.tam-i; j++){
-            //criterio 1
-            if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) > 0 ){
-                struct Fila temp  = tabla.fila[j];
-                tabla.fila[j] = tabla.fila[j+1];
-                tabla.fila[j+1] = temp;
-            }else if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) == 0 ){
-                //Criterio 2
-                if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
-                    struct Fila temp  = tabla.fila[j];
-                    tabla.fila[j] = tabla.fila[j+1];
-                    tabla.fila[j+1] = temp;
-                }else if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) == 0 ){
-                    //Criterio 3
-                    if( strcmp(tabla.fila[j].columna[5], tabla.fila[j+1].columna[5]) > 0 ){
-                        struct Fila temp  = tabla.fila[j];
-                        tabla.fila[j] = tabla.fila[j+1];
-                        tabla.fila[j+1] = temp;
-                    }
-                }
-            }
-        }
-    }
+	int i, j, m, n;
+	for( i=1; i<tabla.tam; i++){
+		for(j=0; j<tabla.tam-i; j++){
+			//criterio 1
+			if( atoi(tabla.fila[j].columna[3])>atoi(tabla.fila[j+1].columna[3]) ){
+				struct Fila temp = tabla.fila[j];
+				tabla.fila[j] = tabla.fila[j+1];
+				tabla.fila[j+1] = temp;
+			}else if( atoi(tabla.fila[j].columna[3])>atoi(tabla.fila[j+1].columna[3]) ){
+				//Criterio 2
+				if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
+					struct Fila temp = tabla.fila[j];
+					tabla.fila[j] = tabla.fila[j+1];
+					tabla.fila[j+1] = temp;
+				}else if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) == 0 ){
+					//Criterio 3
+					if( strcmp(tabla.fila[j].columna[5], tabla.fila[j+1].columna[5]) > 0 ){
+					struct Fila temp = tabla.fila[j];
+					tabla.fila[j] = tabla.fila[j+1];
+					tabla.fila[j+1] = temp;
+				}
+			}
+		}
+	}
+}
+return tabla;
 }
 
 void exportartabla( struct Tabla tabla, char *nombreArchivo ){
