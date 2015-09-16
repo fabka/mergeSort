@@ -25,6 +25,30 @@ int main (int argc, char **argv){
     return 0;
 }
 
+/*
+void *importarTabla(void *param){
+    //Declaraciones
+    char *nombreArchivo;
+    Struct Tabla tabla;
+
+    nombreArchivo = (char*)param;
+    //importar tabla
+    tabla = obtenerTabla(nombreArchivo );
+    77imprimirTabla(tabla);
+    //ordenar tabla
+    ordenarTabla(tabla);
+    //reescribir archivo
+    exportartabla(tabla, nombreArchivo);
+}
+*/
+
+void ordenarArchivo(char nombreArchivo[]){
+    struct Tabla tabla;
+    tabla = importarTabla(nombreArchivo );
+    ordenarTabla(tabla);
+    exportartabla(tabla, nombreArchivo);
+}
+
 struct Fila crearFila(char linea[]){
     struct Fila fila;
     char *stringp = linea;
@@ -40,36 +64,6 @@ struct Fila crearFila(char linea[]){
     }
     return fila;
 };
-
-/*
-void *importarTabla(void *param){
-    //Declaraciones
-    char *nombreArchivo;
-    Struct Tabla tabla;
-
-    nombreArchivo = (char*)param;
-    //importar tabla
-    tabla = obtenerTabla(nombreArchivo );
-    //imprimirTabla(tabla);
-    //ordenar tabla
-    ordenarTabla(tabla);
-    //reescribir archivo
-    exportartabla(tabla, nombreArchivo);
-}
-*/
-
-void importarTabla(char nombreArchivo[]){
-    //Declaraciones
-    Struct Tabla tabla;
-
-    //importar Tabla
-    tabla = obtenerTabla(nombreArchivo );
-    //imprimirTabla(tabla);
-    //ordenar tabla
-    ordenarTabla(tabla);
-    //reescribir archivo
-    exportartabla(tabla, nombreArchivo);
-}
 
 struct Tabla importarTabla(char nombreArchivo[]){
     FILE *ptr_file;
@@ -88,21 +82,10 @@ struct Tabla importarTabla(char nombreArchivo[]){
     return tabla;
 }
 
-void imprimirTabla( struct Tabla tabla ){
-    int i, j;
-    int tam = tabla.tam;
-    for(i=0; i<tam; i++){
-        for(j=0; j<6; j++ ){
-	    printf("%s ",tabla.fila[i].columna[j]);
-        }
-        printf("\n");
-    }
-}
-
 struct Tabla ordenarTabla( struct Tabla tabla ){
     int i, j;
-    for( i=0; i<tabla.tam; i++){
-        for(j=o; j<tabla.tam-i; j++){
+    for( i=1; i<tabla.tam; i++){
+        for(j=0; j<tabla.tam-i; j++){
             //criterio 1
             if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) > 0 ){
                 struct Fila temp  = tabla.fila[j];
@@ -116,7 +99,7 @@ struct Tabla ordenarTabla( struct Tabla tabla ){
                     tabla.fila[j+1] = temp;
                 }else if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) == 0 ){
                     //Criterio 3
-                    if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
+                    if( strcmp(tabla.fila[j].columna[5], tabla.fila[j+1].columna[5]) > 0 ){
                         struct Fila temp  = tabla.fila[j];
                         tabla.fila[j] = tabla.fila[j+1];
                         tabla.fila[j+1] = temp;
@@ -133,11 +116,21 @@ void exportartabla( struct Tabla tabla, char *nombreArchivo ){
     if (file != NULL){
 
         for( i=0; i<tabla.tam; i++ ){
-            fprintf(f, "%8s %4s %8s %6s %8s %8s\n", tabla.fila[i].columna[0],
+            fprintf(file, "%8s %4s %8s %6s %8s %8s", tabla.fila[i].columna[0],
                 tabla.fila[i].columna[1], tabla.fila[i].columna[2],
                 tabla.fila[i].columna[3], tabla.fila[i].columna[4],
                 tabla.fila[i].columna[5] );
         }
         fclose(file);
+    }
+}
+
+void imprimirTabla( struct Tabla tabla ){
+    int i, j;
+    int tam = tabla.tam;
+    for(i=0; i<tam; i++){
+        for(j=0; j<6; j++ ){
+	    printf("%s ",tabla.fila[i].columna[j]);
+        }
     }
 }
