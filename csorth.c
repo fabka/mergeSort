@@ -26,38 +26,29 @@ int main (int argc, char **argv){
     char strTemp[10][100];
 
     for( i=0; i<argc-1; i++){
-        printf("Nombre archivo = %s\n", argv[i+1]);
-        error = pthread_create(&(id[i]), NULL, ordenarArchivo, (void *)&argv[i+1]);
-        if (error != 0)
-            printf("can't create thread :[%s]\n", strerror(error));
-        else if( error == 0 ){
-            printf("Thread created successfully\n");
+        error = pthread_create(&(id[i]), NULL, ordenarArchivo, (void *)argv[i+1]);
+        if (error != 0){
+            //printf("can't create thread :[%s]\n", strerror(error));
+        }else if( error == 0 ){
+            //printf("Thread created successfully\n");
         }
     }
-
     for( i=0; i<argc-1; i++){
-        pthread_join(id[i], (void **)&strTemp[i]);
+        pthread_join(id[i], (void *)strTemp[i]);
     }
     return 0;
 }
 
 void *ordenarArchivo(void *param){
-    printf("Entra\n");
+    
     char* nombreArchivo = (char*)param;
     struct Tabla tabla;
 
-    printf("Nombre archivo = %s\n",nombreArchivo);
     tabla = importarTabla(nombreArchivo );
-    ordenarTabla(tabla);
+    tabla = ordenarTabla(tabla);
     exportartabla(tabla, nombreArchivo);
+    //imprimirTabla(tabla);
 }
-
-/*void ordenarArchivo(char nombreArchivo[]){
-    struct Tabla tabla;
-    tabla = importarTabla(nombreArchivo );
-    ordenarTabla(tabla);
-    exportartabla(tabla, nombreArchivo);
-}*/
 
 struct Fila crearFila(char linea[]){
     struct Fila fila;
@@ -80,7 +71,7 @@ struct Tabla importarTabla(char nombreArchivo[]){
     char buf[1000];
     struct Tabla tabla;
 
-    ptr_file =fopen(nombreArchivo, "r");
+    ptr_file = fopen(nombreArchivo, "r");
 
     int tam = 0;
     if (ptr_file){
@@ -93,15 +84,15 @@ struct Tabla importarTabla(char nombreArchivo[]){
 }
 
 struct Tabla ordenarTabla( struct Tabla tabla ){
-    int i, j;
+    int i, j, m, n;
     for( i=1; i<tabla.tam; i++){
         for(j=0; j<tabla.tam-i; j++){
             //criterio 1
-            if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) > 0 ){
+            if( atoi(tabla.fila[j].columna[3])>atoi(tabla.fila[j+1].columna[3]) ){
                 struct Fila temp  = tabla.fila[j];
                 tabla.fila[j] = tabla.fila[j+1];
                 tabla.fila[j+1] = temp;
-            }else if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) == 0 ){
+            }else if( atoi(tabla.fila[j].columna[3])>atoi(tabla.fila[j+1].columna[3]) ){
                 //Criterio 2
                 if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
                     struct Fila temp  = tabla.fila[j];
@@ -118,6 +109,7 @@ struct Tabla ordenarTabla( struct Tabla tabla ){
             }
         }
     }
+    return tabla;
 }
 
 void exportartabla( struct Tabla tabla, char *nombreArchivo ){
@@ -126,7 +118,7 @@ void exportartabla( struct Tabla tabla, char *nombreArchivo ){
     if (file != NULL){
 
         for( i=0; i<tabla.tam; i++ ){
-            fprintf(file, "%8s %4s %8s %6s %8s %8s", tabla.fila[i].columna[0],
+            fprintf(file, "%8s %4s %8s %6s %8s %8s\n", tabla.fila[i].columna[0],
                 tabla.fila[i].columna[1], tabla.fila[i].columna[2],
                 tabla.fila[i].columna[3], tabla.fila[i].columna[4],
                 tabla.fila[i].columna[5] );
