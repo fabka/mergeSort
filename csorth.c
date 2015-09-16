@@ -16,38 +16,48 @@ struct Fila crearFila(char *linea);
 struct Tabla importarTabla(char nombreArchivo[]);
 struct Tabla ordenarTabla( struct Tabla tabla );
 void exportartabla( struct Tabla tabla, char *nombreArchivo );
-void ordenarArchivo(char nombreArchivo[]);
+void *ordenarArchivo(void *param);
 void imprimirTabla( struct Tabla tabla );
 
 int main (int argc, char **argv){
-    char s[100] = "log1";
-    ordenarArchivo(s);
+
+    pthread_t id[10];
+    int i, error;
+    char strTemp[10][100];
+
+    for( i=0; i<argc-1; i++){
+        printf("Nombre archivo = %s\n", argv[i+1]);
+        error = pthread_create(&(id[i]), NULL, ordenarArchivo, (void *)&argv[i+1]);
+        if (error != 0)
+            printf("can't create thread :[%s]\n", strerror(error));
+        else if( error == 0 ){
+            printf("Thread created successfully\n");
+        }
+    }
+
+    for( i=0; i<argc-1; i++){
+        pthread_join(id[i], (void **)&strTemp[i]);
+    }
     return 0;
 }
 
-/*
-void *importarTabla(void *param){
-    //Declaraciones
-    char *nombreArchivo;
-    Struct Tabla tabla;
-
-    nombreArchivo = (char*)param;
-    //importar tabla
-    tabla = obtenerTabla(nombreArchivo );
-    77imprimirTabla(tabla);
-    //ordenar tabla
-    ordenarTabla(tabla);
-    //reescribir archivo
-    exportartabla(tabla, nombreArchivo);
-}
-*/
-
-void ordenarArchivo(char nombreArchivo[]){
+void *ordenarArchivo(void *param){
+    printf("Entra\n");
+    char* nombreArchivo = (char*)param;
     struct Tabla tabla;
+
+    printf("Nombre archivo = %s\n",nombreArchivo);
     tabla = importarTabla(nombreArchivo );
     ordenarTabla(tabla);
     exportartabla(tabla, nombreArchivo);
 }
+
+/*void ordenarArchivo(char nombreArchivo[]){
+    struct Tabla tabla;
+    tabla = importarTabla(nombreArchivo );
+    ordenarTabla(tabla);
+    exportartabla(tabla, nombreArchivo);
+}*/
 
 struct Fila crearFila(char linea[]){
     struct Fila fila;
@@ -76,7 +86,7 @@ struct Tabla importarTabla(char nombreArchivo[]){
     if (ptr_file){
         while (fgets(buf,1000, ptr_file)!=NULL)
             tabla.fila[tam++] = crearFila(buf);
-	tabla.tam = tam;
+        tabla.tam = tam;
         fclose(ptr_file);
     }
     return tabla;
@@ -130,7 +140,7 @@ void imprimirTabla( struct Tabla tabla ){
     int tam = tabla.tam;
     for(i=0; i<tam; i++){
         for(j=0; j<6; j++ ){
-	    printf("%s ",tabla.fila[i].columna[j]);
+           printf("%s ",tabla.fila[i].columna[j]);
         }
     }
 }
