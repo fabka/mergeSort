@@ -2,18 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-int ordenarArchivo(char nombreArchivo[]){
-    int estado = 1;
-    FILE* ptr_file = fopen(nombreArchivo, "r");
-    if(ptr_file != NULL){
-	estado = 0;
-    	struct Tabla tabla;
-    	tabla = importarTabla(ptr_file);
-    	ordenarTabla(tabla);
-    	exportartabla(tabla, nombreArchivo);
-    }
-    return estado;
+    
+void *ordenarArchivo(void *param){
+    char* nombreArchivo = (char*)param;
+    struct Tabla tabla;
+    tabla = importarTabla(nombreArchivo );
+    tabla = ordenarTabla(tabla);
+    exportartabla(tabla, nombreArchivo);
+    //imprimirTabla(tabla);
 }
 
 struct Fila crearFila(char linea[]){
@@ -21,49 +17,58 @@ struct Fila crearFila(char linea[]){
     char *stringp = linea;
     char *delim = " ";
     char *token;
-
     int i=0;
     while (stringp != NULL) {
         token = strsep(&stringp, delim);
-    	if( strcmp(token, "") != 0  ){
-    	    strcpy(fila.columna[i++], token);
-    	}
+        if( strcmp(token, "") != 0 ){
+	    removeSubstring(token,"\n");
+	    removeSubstring(token,"\r");
+            strcpy(fila.columna[i++], token);
+        }
     }
     return fila;
-};
+}
 
-struct Tabla importarTabla(FILE *ptr_file){
+void removeSubstring(char *s,const char *toremove)
+{
+  while( s=strstr(s,toremove) )
+    memmove(s,s+strlen(toremove),1+strlen(s+strlen(toremove)));
+}
+
+struct Tabla importarTabla(char nombreArchivo[]){
+    FILE *ptr_file;
     char buf[1000];
     struct Tabla tabla;
+    ptr_file = fopen(nombreArchivo, "r");
     int tam = 0;
     if (ptr_file){
         while (fgets(buf,1000, ptr_file)!=NULL)
             tabla.fila[tam++] = crearFila(buf);
-	tabla.tam = tam;
+        tabla.tam = tam;
         fclose(ptr_file);
     }
     return tabla;
 }
 
 struct Tabla ordenarTabla( struct Tabla tabla ){
-    int i, j;
+    int i, j, m, n;
     for( i=1; i<tabla.tam; i++){
         for(j=0; j<tabla.tam-i; j++){
             //criterio 1
-            if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) > 0 ){
-                struct Fila temp  = tabla.fila[j];
+            if( atoi(tabla.fila[j].columna[3])>atoi(tabla.fila[j+1].columna[3]) ){
+                struct Fila temp = tabla.fila[j];
                 tabla.fila[j] = tabla.fila[j+1];
                 tabla.fila[j+1] = temp;
-            }else if( strcmp(tabla.fila[j].columna[3], tabla.fila[j+1].columna[3]) == 0 ){
+            }else if( atoi(tabla.fila[j].columna[3])>atoi(tabla.fila[j+1].columna[3]) ){
                 //Criterio 2
                 if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) > 0 ){
-                    struct Fila temp  = tabla.fila[j];
+                    struct Fila temp = tabla.fila[j];
                     tabla.fila[j] = tabla.fila[j+1];
                     tabla.fila[j+1] = temp;
                 }else if( strcmp(tabla.fila[j].columna[4], tabla.fila[j+1].columna[4]) == 0 ){
                     //Criterio 3
                     if( strcmp(tabla.fila[j].columna[5], tabla.fila[j+1].columna[5]) > 0 ){
-                        struct Fila temp  = tabla.fila[j];
+                        struct Fila temp = tabla.fila[j];
                         tabla.fila[j] = tabla.fila[j+1];
                         tabla.fila[j+1] = temp;
                     }
@@ -71,19 +76,36 @@ struct Tabla ordenarTabla( struct Tabla tabla ){
             }
         }
     }
+    return tabla;
 }
 
 void exportartabla( struct Tabla tabla, char *nombreArchivo ){
     FILE *file = fopen(nombreArchivo, "w");
     int i, j;
     if (file != NULL){
-
+	printf("tabla 1\n");
+	rewind (file);
         for( i=0; i<tabla.tam; i++ ){
-            fprintf(file, "%8s %4s %8s %6s %8s %8s\n", tabla.fila[i].columna[0],
-                tabla.fila[i].columna[1], tabla.fila[i].columna[2],
-                tabla.fila[i].columna[3], tabla.fila[i].columna[4],
-                tabla.fila[i].columna[5] );
+	    /*printf(".%s.%s.%s.%s.%s.%s.\n", tabla.fila[i].columna[0],
+            tabla.fila[i].columna[1], tabla.fila[i].columna[2],
+            tabla.fila[i].columna[3], tabla.fila[i].columna[4],
+            tabla.fila[i].columna[5] );*/
+
+            fprintf(file, "%8s %4s %8s %6s %8s %8s", tabla.fila[i].columna[0],
+            tabla.fila[i].columna[1], tabla.fila[i].columna[2],
+            tabla.fila[i].columna[3], tabla.fila[i].columna[4],
+            tabla.fila[i].columna[5] );
         }
+	int x;
+	printf("\ntabla 2\n");
+	for( i=0; i<tabla.tam; i++ ){
+	    x = printf(".%8s.%4s.%8s.%6s.%8s.%8s.\n", tabla.fila[i].columna[0],
+            tabla.fila[i].columna[1], tabla.fila[i].columna[2],
+            tabla.fila[i].columna[3], tabla.fila[i].columna[4],
+            tabla.fila[i].columna[5] );
+	    printf("\nx = %d\n",x);
+        }
+	
         fclose(file);
     }
 }
@@ -93,57 +115,7 @@ void imprimirTabla( struct Tabla tabla ){
     int tam = tabla.tam;
     for(i=0; i<tam; i++){
         for(j=0; j<6; j++ ){
-	    printf("%s ",tabla.fila[i].columna[j]);
+            printf("%s ",tabla.fila[i].columna[j]);
         }
     }
 }
-
-void ssort(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int hi)
-{
-    if(lo >= hi) return;
-    int mid = (lo + hi)/2;
-    ssort(arr, arrAux, lo, mid);
-    ssort(arr, arrAux, mid+1, hi);
-    mmerge(arr, arrAux, lo, mid, hi);
-}
-
-void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, int hi)
-{
-    int k,l;
-    for(k = lo; k <= hi; k++)
-        for(l = 0; l < 100; l++)
-        	arrAux.fila[k][l] = arr.fila[k][l];
-    int i = lo, j = mid+1;
-    for(k = lo; k <= hi; k++)
-    {
-        if(i > mid)         
-		for(l = 0; l < 100; l++)
-			arr.fila[k][l] = arrAux.fila[j++][l];
-        else if(j > hi)     
-		for(l = 0; l < 100; l++)
-			arr.fila[k][l] = arrAux.fila[i++][l];
-        else if(arrAux.fila[i] > arrAux.fila[j]){
-		for(l = 0; l < 100; l++)
-	            arr.fila[k][l] = arrAux.fila[j++][l];
-        }else{
-		for(l = 0; l < 100; l++)
-            		arr.fila[k][l] = arrAux.fila[i++][l];
-        }
-    }
-}
-
-int fileTam(char *nombreArchivo){
-        FILE * fp = fopen(nombreArchivo, "r");
-	int lines = 0;
-	char ch;
-        if (fp != NULL){
-		while(!feof(fp))
-		{
-		  ch = fgetc(fp);
-		  if(ch == '\n')
-		  {
-		    lines++;
-		  }
-		}
-	}
-} 

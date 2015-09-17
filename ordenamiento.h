@@ -14,13 +14,11 @@ struct TablaMerge{
 };
 
 struct Fila crearFila(char *linea);
-struct Tabla importarTabla(FILE* ptr_file) ;
+struct Tabla importarTabla(char nombreArchivo[]);
 struct Tabla ordenarTabla( struct Tabla tabla );
 void exportartabla( struct Tabla tabla, char *nombreArchivo );
-int ordenarArchivo(char nombreArchivo[]);
+void *ordenarArchivo(void *param);
 void imprimirTabla( struct Tabla tabla );
-void ssort(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int hi);
-void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, int hi);
-int fileTam(char *nombreArchivo);
+void removeSubstring(char *s,const char *toremove);
 
 #include "ordenamiento.c"
