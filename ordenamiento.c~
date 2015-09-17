@@ -16,6 +16,14 @@ int ordenarArchivo(char nombreArchivo[]){
     return estado;
 }
 
+void *ordenarArchivoHilo(void *param){
+	char* nombreArchivo = (char*)param;
+	struct Tabla tabla;
+	tabla = importarTablaHilo(nombreArchivo );
+	tabla = ordenarTabla(tabla);
+	exportartabla(tabla, nombreArchivo);
+}
+
 struct Fila crearFila(char linea[]){
     struct Fila fila;
     char *stringp = linea;
@@ -57,6 +65,21 @@ struct Tabla importarTabla(FILE *ptr_file){
     return tabla;
 }
 
+
+struct Tabla importarTablaHilo(char nombreArchivo[]){
+	FILE *ptr_file;
+	char buf[1000];
+	struct Tabla tabla;
+	ptr_file = fopen(nombreArchivo, "r");
+	int tam = 0;
+	if (ptr_file){
+	while (fgets(buf,1000, ptr_file)!=NULL)
+	tabla.fila[tam++] = crearFila(buf);
+	tabla.tam = tam;
+	fclose(ptr_file);
+	}
+	return tabla;
+}
 struct TablaMerge importarTablaMerge(char* argc[], int argv, int tamTotal)
 {
     char buf[1000];
@@ -116,9 +139,9 @@ void exportartabla( struct Tabla tabla, char *nombreArchivo ){
     FILE *file = fopen(nombreArchivo, "w");
     int i, j;
     if (file != NULL){
-
-        for( i=0; i<tabla.tam; i++ ){
-            fprintf(file, "%8s %4s %8s %6s %8s %8s\n", tabla.fila[i].columna[0],
+	char * cadena;
+        for( i=0; i<tabla.tam; i++ ){	
+            fprintf(file, "%s %s %s %s %s %s\n", tabla.fila[i].columna[0],
                 tabla.fila[i].columna[1], tabla.fila[i].columna[2],
                 tabla.fila[i].columna[3], tabla.fila[i].columna[4],
                 tabla.fila[i].columna[5] );

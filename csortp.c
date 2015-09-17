@@ -17,10 +17,10 @@ int main(int argv, char* argc[]){
 		exit(1);
 	}
         if(childPid == 0){
-		/*if(ordenarArchivo(argc[i]) == 1){
+		if(ordenarArchivo(argc[i]) == 1){
 			perror("Child sort error: ");
 			exit(1);
-		}*/
+		}
 		exit(0);
 	}
     }

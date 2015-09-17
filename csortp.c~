@@ -40,7 +40,6 @@ int main(int argv, char* argc[]){
     arr.tam = tamTotal;
     arr = importarTablaMerge(argc, argv, tamTotal);
     ssort(arr, arrAux, 0, tamTotal-1);
-printf("prueba %s\n",argc[argv-1]);
     exportartablaMerge(arr, argc[argv-1]);
     exit(0);
 }

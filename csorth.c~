@@ -2,77 +2,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-struct Fila{
-    char columna[6][100];
-};
-
-struct Tabla{
-    struct Fila filas[100];
-    int tam;
-};
-
-struct Fila crearFila(char *linea);
-struct Tabla obtenerTabla(char nombreArchivo[]);
-void ordenarArchivo(char nombreArchivo[]);
-void imprimirTabla( struct Tabla tabla );
+#include "ordenamiento.h"
 
 int main (int argc, char **argv){
-    char s[100] = "log1";
-    ordenarArchivo(s);
-    return 0;
-}
+    pthread_t id[10];
+    int i, error;
+    char strTemp[10][100];
 
-struct Fila crearFila(char linea[]){
-    struct Fila fila;
-    char *stringp = linea;
-    char *delim = " ";
-    char *token;
-    
-    int i=0;
-    while (stringp != NULL) {
-        token = strsep(&stringp, delim);
-	if( strcmp(token, "") != 0  ){
-	    strcpy(fila.columna[i++], token);
-	}
-    }
-    return fila;
-};
-
-void ordenarArchivo(char nombreArchivo[]){
-    //Declaraciones
-    struct Tabla tabla = obtenerTabla( nombreArchivo );
-    imprimirTabla(tabla);
-
-    //Copiar contenido
-    //organizar arreglo
-    //reescribir archivo
-}
-
-struct Tabla obtenerTabla(char nombreArchivo[]){
-    FILE *ptr_file;
-    char buf[1000];
-    struct Tabla tabla;	
-    
-    ptr_file =fopen(nombreArchivo, "r");
-
-    int tam = 0;
-    if (ptr_file){
-        while (fgets(buf,1000, ptr_file)!=NULL)
-            tabla.filas[tam++] = crearFila(buf);
-	tabla.tam = tam;
-        fclose(ptr_file);
-    }
-    return tabla;
-}
-
-void imprimirTabla( struct Tabla tabla ){
-    int i, j;
-    int tam = tabla.tam;
-    for(i=0; i<tam; i++){
-        for(j=0; j<6; j++ ){
-	    printf("%s ",tabla.filas[i].columna[j]);
+    for( i=0; i<argc-3; i++){
+        error = pthread_create(&(id[i]), NULL, ordenarArchivoHilo, (void *)argv[i+1]);
+        if (error != 0){
+            perror("Error en el hilo:");
+        }else if( error == 0 ){
+            printf("Thread created successfully\n");
         }
-        printf("\n");
     }
+    for( i=0; i<argc-4; i++){
+        pthread_join(id[i], (void *)strTemp[i]);
+    }
+    int tamTotal = 0,j;
+    for(i = 1; i < argc-2; i++){
+       tamTotal += fileTam(argv[i]);
+    } 	
+    struct TablaMerge arr,arrAux;
+    arrAux.filas = (char***)malloc(sizeof(char**)*tamTotal*600);
+    for(i = 0; i < tamTotal; i++){
+	arrAux.filas[i] = (char**)malloc(sizeof(char*)*6);
+	for(j = 0; j < 6; j++){
+		arrAux.filas[i][j] = (char*)malloc(sizeof(char)*100);
+    	}
+    }
+    arr.tam = tamTotal;
+    arr = importarTablaMerge(argv, argc-1, tamTotal);
+    ssort(arr, arrAux, 0, tamTotal-1);
+    exportartablaMerge(arr, argv[argc-2]);
+    exit(0);
 }
+
+
