@@ -1,11 +1,10 @@
 
-
 struct Fila{
     char columna[6][100];
 };
 
 struct Tabla{
-    struct Fila fila[100];
+    struct Fila fila[1000];
     int tam;
 };
 

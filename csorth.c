@@ -17,11 +17,10 @@ int main (int argc, char **argv){
             printf("Thread created successfully\n");
         }
     }
-    printf("Argc = %d\n",argc);
+    
     for( i=0; i<argc-2; i++){
         pthread_join(id[i], (void *)strTemp[i]);
     }
-    printf("Entra\n");
 
     int tamTotal = 0,j;
     for(i = 1; i < argc-1; i++){
