@@ -27,5 +27,6 @@ void ssort(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int hi);
 void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, int hi);
 int fileTam(char *nombreArchivo);
 void crearFilaMerge(char linea[], char** retorno);
+int compare(char columnas1[6][100], char columnas2[6][100] );
 
 #include "ordenamiento.c"

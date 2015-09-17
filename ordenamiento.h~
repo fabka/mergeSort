@@ -10,7 +10,7 @@ struct Tabla{
 };
 
 struct TablaMerge{
-   char *filas[6][100];
+   char*** filas;
    int tam;
 };
 

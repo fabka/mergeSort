@@ -177,6 +177,7 @@ void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, in
         	strcpy(arrAux.filas[k][l],arr.filas[k][l]);
     int i = lo, j = mid+1;
 
+
     for(k = lo; k <= hi; k++)
     {
         if(i > mid){         
@@ -189,7 +190,7 @@ void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, in
 			strcpy(arr.filas[k][l] , arrAux.filas[i][l]);
 		}
 		i++;
-        }else if(arrAux.filas[i] > arrAux.filas[j]){
+        }else if((atoi(arrAux.filas[i][3]) > atoi(arrAux.filas[j][3])) || (atoi(arrAux.filas[i][3]) == atoi(arrAux.filas[j][3]) && arrAux.filas[i][4] > arrAux.filas[j][4]) || (atoi(arrAux.filas[i][3]) == atoi(arrAux.filas[j][3]) && arrAux.filas[i][4] == arrAux.filas[j][4] && arrAux.filas[i][5] == arrAux.filas[j][5])){
 		for(l = 0; l < 6; l++){
 	            strcpy(arr.filas[k][l] , arrAux.filas[j][l]);
 		}
