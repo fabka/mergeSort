@@ -14,7 +14,7 @@ int main (int argc, char **argv){
         if (error != 0){
             perror("Error en el hilo:");
         }else if( error == 0 ){
-            printf("Thread created successfully\n");
+            //printf("Thread created successfully\n");
         }
     }
 

@@ -77,7 +77,9 @@ struct Tabla importarTablaHilo(char nombreArchivo[]){
 	tabla.fila[tam++] = crearFila(buf);
 	tabla.tam = tam;
 	fclose(ptr_file);
-	}
+	}else{
+		perror("error abriendo archivo");
+	}	
 	return tabla;
 }
 struct TablaMerge importarTablaMerge(char* argc[], int argv, int tamTotal)
@@ -136,7 +138,7 @@ return tabla;
 }
 
 void exportartabla( struct Tabla tabla, char *nombreArchivo ){
-    printf("\nnombre archivo = %s\n",nombreArchivo);
+    //printf("\nnombre archivo = %s\n",nombreArchivo);
     FILE *file = fopen(nombreArchivo, "w");
     int i;
     if (file != NULL){
@@ -147,18 +149,18 @@ void exportartabla( struct Tabla tabla, char *nombreArchivo ){
                 tabla.fila[i].columna[5] );
             fflush(file);
         }
-        printf("\ncerro\n");
+        //printf("\ncerro\n");
         fclose(file);
     }
 }
 
 void exportartablaMerge( struct TablaMerge tabla, char *nombreArchivo ){
-    printf("\nnombre archivo = %s\n",nombreArchivo);
+    //printf("\nnombre archivo = %s\n",nombreArchivo);
     FILE *file = fopen(nombreArchivo, "w");
     int i, j;
     if (file != NULL){
         for( i=0; i<tabla.tam; i++ ){
-            fprintf(file, "%8s %4s %8s %6s %8s %8s\n", tabla.filas[i][0],
+            fprintf(file, "%s %s %s %s %s %s", tabla.filas[i][0],
                 tabla.filas[i][1], tabla.filas[i][2],
                 tabla.filas[i][3], tabla.filas[i][4],
                 tabla.filas[i][5] );

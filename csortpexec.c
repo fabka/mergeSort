@@ -48,9 +48,6 @@ int main(int argv, char* argc[]){
     command[argv+2] = aux;
     strcpy(command[argv+3], argc[argv-1]);
     command[argv+4] = (char*)NULL;
-    for(i = 0; i < 9; i++){
-	printf("%s\n",command[i]);
-	}
     if(execvp("sort", command ) == -1){
 			perror("Parent sort error: ");
 			exit(1);
