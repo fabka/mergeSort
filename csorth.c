@@ -17,12 +17,13 @@ int main (int argc, char **argv){
             printf("Thread created successfully\n");
         }
     }
-    
+
     for( i=0; i<argc-2; i++){
         pthread_join(id[i], (void *)strTemp[i]);
     }
 
     int tamTotal = 0,j;
+
     for(i = 1; i < argc-1; i++){
        tamTotal += fileTam(argv[i]);
     }
@@ -35,8 +36,8 @@ int main (int argc, char **argv){
     	}
     }
     arr.tam = tamTotal;
-    arr = importarTablaMerge(argv, argc-1, tamTotal);
+    arr = importarTablaMerge(argv, argc, tamTotal);
     ssort(arr, arrAux, 0, tamTotal-1);
-    exportartablaMerge(arr, argv[argc-2]);
+    exportartablaMerge(arr, argv[argc-1]);
     exit(0);
 }

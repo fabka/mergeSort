@@ -92,7 +92,7 @@ struct TablaMerge importarTablaMerge(char* argc[], int argv, int tamTotal)
 		tabla.filas[i][j] = (char*)malloc(sizeof(char)*100);
     	}
     }
-    
+
     FILE* ptr_file;
     for(i = 1; i < argv-1; i++){
     	    ptr_file = fopen(argc[i], "r");
@@ -136,21 +136,24 @@ return tabla;
 }
 
 void exportartabla( struct Tabla tabla, char *nombreArchivo ){
+    printf("\nnombre archivo = %s\n",nombreArchivo);
     FILE *file = fopen(nombreArchivo, "w");
-    int i, j;
+    int i;
     if (file != NULL){
-	char * cadena;
-        for( i=0; i<tabla.tam; i++ ){		
+        for( i=0; i<tabla.tam; i++ ){
             fprintf(file, "%s %s %s %s %s %s\n", tabla.fila[i].columna[0],
                 tabla.fila[i].columna[1], tabla.fila[i].columna[2],
                 tabla.fila[i].columna[3], tabla.fila[i].columna[4],
                 tabla.fila[i].columna[5] );
+            fflush(file);
         }
+        printf("\ncerro\n");
         fclose(file);
     }
 }
 
 void exportartablaMerge( struct TablaMerge tabla, char *nombreArchivo ){
+    printf("\nnombre archivo = %s\n",nombreArchivo);
     FILE *file = fopen(nombreArchivo, "w");
     int i, j;
     if (file != NULL){
@@ -172,6 +175,7 @@ void imprimirTabla( struct Tabla tabla ){
 	    printf("%s ",tabla.fila[i].columna[j]);
         }
     }
+    printf("\n");
 }
 
 void imprimirTablaMerge( struct TablaMerge tabla ){
@@ -203,12 +207,12 @@ void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, in
 
     for(k = lo; k <= hi; k++)
     {
-        if(i > mid){         
+        if(i > mid){
 		for(l = 0; l < 6; l++){
 			strcpy(arr.filas[k][l], arrAux.filas[j][l]);
 		}
 		j++;
-        }else if(j > hi) {  
+        }else if(j > hi) {
 		for(l = 0; l < 6; l++){
 			strcpy(arr.filas[k][l] , arrAux.filas[i][l]);
 		}
@@ -233,8 +237,8 @@ int fileTam(char *nombreArchivo){
 	char buf[1000];
     	if (fp != NULL){
         	while (fgets(buf,1000, fp)!=NULL){
-		 lines++;		
+		 lines++;
 		}
 	}
 	return lines;
-} 
+}

@@ -24,11 +24,12 @@ int main(int argv, char* argc[]){
 		exit(0);
 	}
     }
+
     for(i = 1; i < argv-1; i++){ wait(&status);}
     int tamTotal = 0,j;
     for(i = 1; i < argv-1; i++){
        tamTotal += fileTam(argc[i]);
-    } 	
+    }
     struct TablaMerge arr,arrAux;
     arrAux.filas = (char***)malloc(sizeof(char**)*tamTotal*600);
     for(i = 0; i < tamTotal; i++){
