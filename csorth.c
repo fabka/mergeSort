@@ -9,7 +9,7 @@ int main (int argc, char **argv){
     int i, error;
     char strTemp[10][100];
 
-    for( i=0; i<argc-3; i++){
+    for( i=0; i<argc-2; i++){
         error = pthread_create(&(id[i]), NULL, ordenarArchivoHilo, (void *)argv[i+1]);
         if (error != 0){
             perror("Error en el hilo:");
@@ -17,13 +17,16 @@ int main (int argc, char **argv){
             printf("Thread created successfully\n");
         }
     }
-    for( i=0; i<argc-3; i++){
+    printf("Argc = %d\n",argc);
+    for( i=0; i<argc-2; i++){
         pthread_join(id[i], (void *)strTemp[i]);
     }
+    printf("Entra\n");
+
     int tamTotal = 0,j;
-    for(i = 1; i < argc-2; i++){
+    for(i = 1; i < argc-1; i++){
        tamTotal += fileTam(argv[i]);
-    } 	
+    }
     struct TablaMerge arr,arrAux;
     arrAux.filas = (char***)malloc(sizeof(char**)*tamTotal*600);
     for(i = 0; i < tamTotal; i++){
@@ -38,5 +41,3 @@ int main (int argc, char **argv){
     exportartablaMerge(arr, argv[argc-2]);
     exit(0);
 }
-
-
