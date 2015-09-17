@@ -10,17 +10,22 @@ struct Tabla{
 };
 
 struct TablaMerge{
-   char* fila[6][100];
+   char *filas[6][100];
+   int tam;
 };
 
 struct Fila crearFila(char *linea);
 struct Tabla importarTabla(FILE* ptr_file) ;
+struct TablaMerge importarTablaMerge(char* argc[], int argv, int tamTotal) ;
 struct Tabla ordenarTabla( struct Tabla tabla );
 void exportartabla( struct Tabla tabla, char *nombreArchivo );
+void exportartablaMerge( struct TablaMerge tabla, char *nombreArchivo );
 int ordenarArchivo(char nombreArchivo[]);
 void imprimirTabla( struct Tabla tabla );
-void ssort(TablaMerge arr, TablaMerge arrAux, int lo, int hi);
-void mmerge(TablaMerge arr, TablaMerge arrAux, int lo, int mid, int hi);
+void imprimirTablaMerge( struct TablaMerge tabla );
+void ssort(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int hi);
+void mmerge(struct TablaMerge arr, struct TablaMerge arrAux, int lo, int mid, int hi);
 int fileTam(char *nombreArchivo);
+void crearFilaMerge(char linea[], char** retorno);
 
 #include "ordenamiento.c"
